@@ -1,0 +1,208 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block coltype %}colM{% endblock %}
+
+{% block bodyclass %}{{ block.super }} dashboard campus-dashboard-page{% endblock %}
+
+{% block nav-breadcrumbs %}{% endblock %}
+{% block content_title %}{% endblock %}
+
+{% block content %}
+<div class="campus-dashboard">
+  <header class="campus-dashboard__hero">
+    <div class="campus-dashboard__hero-text">
+      <h1>{% trans 'Campus Portal Analytics' %}</h1>
+      <p>{% trans 'Real-time insights across students, groups, notes, and support.' %}</p>
+    </div>
+    <div class="campus-dashboard__hero-actions">
+      <a href="{% url 'admin:api_student_changelist' %}" class="campus-btn campus-btn--light">{% trans 'Students' %}</a>
+      <a href="{% url 'admin:api_supportrequest_changelist' %}" class="campus-btn campus-btn--light">{% trans 'Support' %}</a>
+    </div>
+  </header>
+
+  <div class="campus-stats" role="list">
+    <article class="campus-stat" role="listitem">
+      <div class="campus-stat__label">{% trans 'Students' %}</div>
+      <div class="campus-stat__value">{{ students_count }}</div>
+    </article>
+    <article class="campus-stat" role="listitem">
+      <div class="campus-stat__label">{% trans 'Groups' %}</div>
+      <div class="campus-stat__value">{{ groups_count }}</div>
+    </article>
+    <article class="campus-stat" role="listitem">
+      <div class="campus-stat__label">{% trans 'Notes' %}</div>
+      <div class="campus-stat__value">{{ notes_count }}</div>
+    </article>
+    <article class="campus-stat" role="listitem">
+      <div class="campus-stat__label">{% trans 'Assignments' %}</div>
+      <div class="campus-stat__value">{{ assignments_count }}</div>
+    </article>
+    <article class="campus-stat" role="listitem">
+      <div class="campus-stat__label">{% trans 'eBooks' %}</div>
+      <div class="campus-stat__value">{{ books_count }}</div>
+    </article>
+    <article class="campus-stat" role="listitem">
+      <div class="campus-stat__label">{% trans 'Courses' %}</div>
+      <div class="campus-stat__value">{{ courses_count }}</div>
+    </article>
+    <article class="campus-stat" role="listitem">
+      <div class="campus-stat__label">{% trans 'Support' %}</div>
+      <div class="campus-stat__value">{{ support_count }}</div>
+    </article>
+    <article class="campus-stat campus-stat--warn" role="listitem">
+      <div class="campus-stat__label">{% trans 'Pending' %}</div>
+      <div class="campus-stat__value">{{ pending_count }}</div>
+    </article>
+  </div>
+
+  <div class="campus-dashboard__body">
+    <div class="campus-dashboard__main">
+      <div class="campus-charts">
+        <div class="campus-chart-card campus-chart-card--half">
+          <h2>{% trans 'Students by Department' %}</h2>
+          <div class="campus-chart-wrap"><canvas id="departmentChart"></canvas></div>
+        </div>
+        <div class="campus-chart-card campus-chart-card--half">
+          <h2>{% trans 'Enrollment by Course' %}</h2>
+          <div class="campus-chart-wrap"><canvas id="courseChart"></canvas></div>
+        </div>
+        <div class="campus-chart-card campus-chart-card--half">
+          <h2>{% trans 'Support by Status' %}</h2>
+          <div class="campus-chart-wrap"><canvas id="supportChart"></canvas></div>
+        </div>
+        <div class="campus-chart-card campus-chart-card--half">
+          <h2>{% trans 'Student Registrations' %}</h2>
+          <div class="campus-chart-wrap"><canvas id="registrationChart"></canvas></div>
+        </div>
+        <div class="campus-chart-card campus-chart-card--wide">
+          <h2>{% trans 'Support Request Trend' %}</h2>
+          <div class="campus-chart-wrap"><canvas id="trendChart"></canvas></div>
+        </div>
+        <div class="campus-chart-card campus-chart-card--wide">
+          <h2>{% trans 'Notes Published' %}</h2>
+          <div class="campus-chart-wrap"><canvas id="notesChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="campus-dashboard__sidebar">
+      <section class="campus-admin-apps">
+        <h2>{% trans 'Quick manage' %}</h2>
+        {% if app_list %}
+          <div class="campus-apps-grid">
+            {% for app in app_list %}
+              <div class="campus-app-card app-{{ app.app_label }}">
+                <h3 class="campus-app-card__title">
+                  {% if app.app_url %}
+                    <a href="{{ app.app_url }}">{{ app.name }}</a>
+                  {% else %}
+                    {{ app.name }}
+                  {% endif %}
+                </h3>
+                <ul class="campus-model-list">
+                  {% for model in app.models %}
+                    <li class="campus-model-list__item">
+                      <span class="campus-model-list__name">
+                        {% if model.admin_url %}
+                          <a href="{{ model.admin_url }}">{{ model.name }}</a>
+                        {% else %}
+                          {{ model.name }}
+                        {% endif %}
+                      </span>
+                      <span class="campus-model-list__actions">
+                        {% if model.add_url %}
+                          <a href="{{ model.add_url }}" class="campus-pill">+</a>
+                        {% endif %}
+                        {% if model.admin_url %}
+                          <a href="{{ model.admin_url }}" class="campus-pill campus-pill--muted">→</a>
+                        {% endif %}
+                      </span>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="campus-empty">{% trans "You don't have permission to view or edit anything." %}</p>
+        {% endif %}
+      </section>
+    </aside>
+  </div>
+</div>
+
+<script>
+(function () {
+  const palette = ['#1b5e20', '#2e7d32', '#4caf50', '#66bb6a', '#81c784', '#a5d6a7'];
+  const base = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { labels: { font: { family: 'DM Sans', size: 11 }, boxWidth: 12 } } },
+  };
+
+  const mk = (id, cfg) => new Chart(document.getElementById(id), cfg);
+
+  mk('departmentChart', {
+    type: 'doughnut',
+    data: {
+      labels: {{ department_labels_json|safe }},
+      datasets: [{ data: {{ department_data_json|safe }}, backgroundColor: palette }],
+    },
+    options: { ...base, plugins: { legend: { position: 'bottom' } } },
+  });
+
+  mk('courseChart', {
+    type: 'bar',
+    data: {
+      labels: {{ course_labels_json|safe }},
+      datasets: [{ label: 'Students', data: {{ course_data_json|safe }}, backgroundColor: '#2e7d32', borderRadius: 6 }],
+    },
+    options: { ...base, plugins: { legend: { display: false } } },
+  });
+
+  mk('supportChart', {
+    type: 'bar',
+    data: {
+      labels: {{ status_labels_json|safe }},
+      datasets: [{ data: {{ status_data_json|safe }}, backgroundColor: ['#ffb74d', '#42a5f5', '#66bb6a', '#90a4ae'], borderRadius: 6 }],
+    },
+    options: { ...base, plugins: { legend: { display: false } } },
+  });
+
+  mk('registrationChart', {
+    type: 'line',
+    data: {
+      labels: {{ month_labels_json|safe }},
+      datasets: [{ label: 'Students', data: {{ month_data_json|safe }}, borderColor: '#1b5e20', backgroundColor: 'rgba(27,94,32,0.12)', fill: true, tension: 0.35 }],
+    },
+    options: base,
+  });
+
+  mk('trendChart', {
+    type: 'line',
+    data: {
+      labels: {{ trend_labels_json|safe }},
+      datasets: [{ label: 'Support', data: {{ trend_data_json|safe }}, borderColor: '#e65100', backgroundColor: 'rgba(230,81,0,0.1)', fill: true, tension: 0.35 }],
+    },
+    options: base,
+  });
+
+  mk('notesChart', {
+    type: 'line',
+    data: {
+      labels: {{ notes_labels_json|safe }},
+      datasets: [{ label: 'Notes', data: {{ notes_data_json|safe }}, borderColor: '#1565c0', backgroundColor: 'rgba(21,101,192,0.1)', fill: true, tension: 0.35 }],
+    },
+    options: base,
+  });
+})();
+</script>
+{% endblock %}
+
+{% block sidebar %}{% endblock %}
