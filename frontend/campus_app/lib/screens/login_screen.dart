@@ -38,7 +38,10 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordController.addListener(_clearFeedback);
     _timer = Timer.periodic(const Duration(seconds: 6), (_) {
       if (mounted) {
-        setState(() => _currentImageIndex = (_currentImageIndex + 1) % _bgImages.length);
+        setState(
+          () =>
+              _currentImageIndex = (_currentImageIndex + 1) % _bgImages.length,
+        );
       }
     });
   }
@@ -102,7 +105,8 @@ class _LoginScreenState extends State<LoginScreen> {
               fit: BoxFit.cover,
               width: double.infinity,
               height: double.infinity,
-              errorBuilder: (_, __, ___) => Container(color: AppTheme.primary),
+              errorBuilder: (context, error, stack) =>
+                  Container(color: AppTheme.primary),
             ),
           ),
           Container(
@@ -134,12 +138,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: Colors.white.withValues(alpha: 0.12),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.school, size: 56, color: Colors.white),
+                          child: const Icon(
+                            Icons.school,
+                            size: 56,
+                            color: Colors.white,
+                          ),
                         ),
                         const SizedBox(height: 16),
                         Text(
                           'Campus Portal',
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -163,7 +172,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           controller: _usernameController,
                           style: const TextStyle(color: Colors.white),
                           textInputAction: TextInputAction.next,
-                          decoration: _fieldDecoration('Username or email', Icons.person_outline),
+                          decoration: _fieldDecoration(
+                            'Username or email',
+                            Icons.person_outline,
+                          ),
                           validator: (v) {
                             if (v == null || v.trim().isEmpty) {
                               return 'Enter your username or email';
@@ -178,8 +190,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           lightStyle: true,
                           textInputAction: TextInputAction.done,
                           onSubmitted: (_) => auth.isBusy ? null : _login(),
-                          validator: (v) =>
-                              v == null || v.isEmpty ? 'Enter your password' : null,
+                          validator: (v) => v == null || v.isEmpty
+                              ? 'Enter your password'
+                              : null,
                         ),
                         const SizedBox(height: 28),
                         SizedBox(
@@ -196,7 +209,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ? const SizedBox(
                                     width: 20,
                                     height: 20,
-                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
                                   )
                                 : const Icon(Icons.login),
                             label: Text(
@@ -213,14 +228,22 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: auth.isBusy
                               ? null
                               : () => Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) => const ServerSettingsScreen(),
-                                    ),
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        const ServerSettingsScreen(),
                                   ),
-                          icon: const Icon(Icons.settings, color: Colors.white70, size: 18),
+                                ),
+                          icon: const Icon(
+                            Icons.settings,
+                            color: Colors.white70,
+                            size: 18,
+                          ),
                           label: const Text(
                             'Server settings (physical device)',
-                            style: TextStyle(color: Colors.white70, fontSize: 13),
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -235,10 +258,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPressed: auth.isBusy
                                   ? null
                                   : () => Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) => const RegisterScreen(),
-                                        ),
+                                      MaterialPageRoute(
+                                        builder: (_) => const RegisterScreen(),
                                       ),
+                                    ),
                               child: const Text(
                                 'Create an account',
                                 style: TextStyle(

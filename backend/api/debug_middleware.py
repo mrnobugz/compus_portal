@@ -8,6 +8,10 @@ _AUTH_PATHS = ('/api/token/', '/api/users/me/', '/api/auth/register/')
 
 
 def _agent_log(hypothesis_id, location, message, data=None, run_id='pre-fix'):
+    # Only log in debug mode (skip logging in production)
+    import os
+    if not os.environ.get('DEBUG', '').lower() in ('1', 'true', 'yes'):
+        return
     # #region agent log
     entry = {
         'sessionId': _SESSION_ID,

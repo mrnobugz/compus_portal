@@ -86,7 +86,7 @@ class _BooksScreenState extends State<BooksScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => DocumentReaderScreen(
+        builder: (context) => DocumentReaderScreen(
           title: book['title']?.toString() ?? 'Book',
           fileUrl: fileUrl!,
           fileType: fileType,
@@ -122,7 +122,7 @@ class _BooksScreenState extends State<BooksScreen> {
                         width: 48,
                         height: 48,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _bookIcon(),
+                        errorBuilder: (context, error, stack) => _bookIcon(),
                       ),
                     )
                   : _bookIcon(),
@@ -133,26 +133,32 @@ class _BooksScreenState extends State<BooksScreen> {
               subtitle: Text(book['author']?.toString() ?? ''),
               trailing: hasFile
                   ? busy
-                      ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.visibility, color: AppTheme.primary),
-                              tooltip: 'Read in app',
-                              onPressed: () => _preview(book),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.download, color: AppTheme.primary),
-                              tooltip: 'Download',
-                              onPressed: () => _download(book),
-                            ),
-                          ],
-                        )
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.visibility,
+                                  color: AppTheme.primary,
+                                ),
+                                tooltip: 'Read in app',
+                                onPressed: () => _preview(book),
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.download,
+                                  color: AppTheme.primary,
+                                ),
+                                tooltip: 'Download',
+                                onPressed: () => _download(book),
+                              ),
+                            ],
+                          )
                   : null,
               onTap: hasFile ? () => _preview(book) : null,
             ),

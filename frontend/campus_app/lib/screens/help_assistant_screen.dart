@@ -11,7 +11,7 @@ class HelpAssistantScreen extends StatefulWidget {
 class _HelpAssistantScreenState extends State<HelpAssistantScreen> {
   final _controller = TextEditingController();
   final _messages = <_ChatMessage>[
-    const _ChatMessage(
+    _ChatMessage(
       isBot: true,
       text:
           'Hi! I\'m the Campus Portal assistant. Ask about login, notes, assignments, library, support, grades, or attendance.',
@@ -19,18 +19,30 @@ class _HelpAssistantScreenState extends State<HelpAssistantScreen> {
   ];
 
   static const _faq = {
-    'login': 'Use your username or email with your password on the login screen. New students can tap "Create an account" to register.',
-    'register': 'Tap "New student? Create an account" on the login page. You\'ll need your student ID, department, and course.',
-    'notes': 'Open the Notes tab to view course materials. Tap a note to read PDF/TXT in-app or download it.',
-    'assignment': 'Check the Tasks tab for assignments. Tap download to save files to your device.',
-    'library': 'From Home, tap Library to browse eBooks. Tap a book to download it for offline reading.',
-    'book': 'From Home, tap Library to browse eBooks. Tap a book to download it for offline reading.',
-    'support': 'Go to Home → Support to submit a ticket. Staff replies appear in the app and you get a notification.',
-    'grade': 'Open Home → Performance to view your scores and average percentage.',
-    'performance': 'Open Home → Performance to view your scores and average percentage.',
-    'attendance': 'Open Home → Attendance to see your session history and attendance rate.',
-    'password': 'Contact your administrator to reset your password. Admins can manage accounts at /admin/.',
-    'group': 'The Groups tab shows study groups matched to your department and course.',
+    'login':
+        'Use your username or email with your password on the login screen. New students can tap "Create an account" to register.',
+    'register':
+        'Tap "New student? Create an account" on the login page. You\'ll need your student ID, department, and course.',
+    'notes':
+        'Open the Notes tab to view course materials. Tap a note to read PDF/TXT in-app or download it.',
+    'assignment':
+        'Check the Tasks tab for assignments. Tap download to save files to your device.',
+    'library':
+        'From Home, tap Library to browse eBooks. Tap a book to download it for offline reading.',
+    'book':
+        'From Home, tap Library to browse eBooks. Tap a book to download it for offline reading.',
+    'support':
+        'Go to Home → Support to submit a ticket. Staff replies appear in the app and you get a notification.',
+    'grade':
+        'Open Home → Performance to view your scores and average percentage.',
+    'performance':
+        'Open Home → Performance to view your scores and average percentage.',
+    'attendance':
+        'Open Home → Attendance to see your session history and attendance rate.',
+    'password':
+        'Contact your administrator to reset your password. Admins can manage accounts at /admin/.',
+    'group':
+        'The Groups tab shows study groups matched to your department and course.',
   };
 
   @override
@@ -77,10 +89,15 @@ class _HelpAssistantScreenState extends State<HelpAssistantScreen> {
               itemBuilder: (context, i) {
                 final msg = _messages[i];
                 return Align(
-                  alignment: msg.isBot ? Alignment.centerLeft : Alignment.centerRight,
+                  alignment: msg.isBot
+                      ? Alignment.centerLeft
+                      : Alignment.centerRight,
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 10),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
                     constraints: BoxConstraints(
                       maxWidth: MediaQuery.sizeOf(context).width * 0.8,
                     ),

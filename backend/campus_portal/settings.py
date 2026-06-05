@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from datetime import timedelta
 
@@ -21,16 +22,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-015-39(vi!#-3xw3p16l&%$5ozt@ko+7x#8#@#ttf3oi6pi+p7'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-015-39(vi!#-3xw3p16l&%$5ozt@ko+7x#8#@#ttf3oi6pi+p7')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    "10.0.2.2",   # Android emulator
-]
+# Render provides the domain via RENDER_EXTERNAL_URL
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "10.0.2.2"]
+if os.environ.get('RENDER_EXTERNAL_URL'):
+    ALLOWED_HOSTS.append(os.environ.get('RENDER_EXTERNAL_URL').replace('https://', '').replace('http://', '').split(':')[0])
+# Add your custom domain here for production
+# ALLOWED_HOSTS.append('yourdomain.com')
 
 
 
@@ -149,6 +151,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files (uploads)
 MEDIA_URL = '/media/'
