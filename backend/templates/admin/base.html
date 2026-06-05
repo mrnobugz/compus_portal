@@ -1,0 +1,25 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Campus Portal') }}{% endblock %}
+
+{% block branding %}
+<div id="branding">
+  <h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Campus Portal') }}</a></h1>
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'campus/campus_admin.css' %}">
+{% endblock %}
+
+{% block footer %}
+<div style="text-align:center;padding:12px;color:var(--body-quiet-color);font-size:0.8rem;">
+  Campus Portal Administration
+</div>
+{{ block.super }}
+{% endblock %}
